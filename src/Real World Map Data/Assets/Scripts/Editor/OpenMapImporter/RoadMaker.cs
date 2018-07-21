@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 /*
@@ -27,27 +26,36 @@ using UnityEngine;
 /// <summary>
 /// Road infrastructure maker.
 /// </summary>
-class RoadMaker : InfrastructureBehaviour
+internal sealed class RoadMaker : BaseInfrastructureMaker
 {
     public Material roadMaterial;
+
+    public override int NodeCount
+    {
+        get { return map.ways.FindAll((w) => { return w.IsRoad; }).Count; }
+    }
+
+    public RoadMaker(MapReader mapReader, Material roadMat)
+        : base(mapReader)
+    {
+        roadMaterial = roadMat;
+    }
 
     /// <summary>
     /// Create the roads.
     /// </summary>
     /// <returns></returns>
-    IEnumerator Start()
+    public override IEnumerable<int> Process()
     {
-        // Wait for the map to become ready
-        while (!map.IsReady)
-        {
-            yield return null;
-        }
+        int count = 0;
 
         // Iterate through the roads and build each one
         foreach (var way in map.ways.FindAll((w) => { return w.IsRoad; }))
         {
             CreateObject(way, roadMaterial, way.Name);
-            yield return null;
+
+            count++;
+            yield return count;
         }
     }
 

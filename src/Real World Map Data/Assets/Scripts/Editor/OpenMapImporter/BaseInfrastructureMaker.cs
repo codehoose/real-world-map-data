@@ -26,8 +26,7 @@ using UnityEngine;
 /// <summary>
 /// Base infrastructure creator.
 /// </summary>
-[RequireComponent(typeof(MapReader))]
-abstract class InfrastructureBehaviour : MonoBehaviour
+internal abstract class BaseInfrastructureMaker
 {
     /// <summary>
     /// The map reader object; contains all the data to build procedural geometry.
@@ -35,12 +34,23 @@ abstract class InfrastructureBehaviour : MonoBehaviour
     protected MapReader map;
 
     /// <summary>
+    /// The number of nodes present of this type in a file.
+    /// </summary>
+    public abstract int NodeCount { get; }
+
+    /// <summary>
     /// Awaken this instance!!!
     /// </summary>
-    void Awake()
+    public BaseInfrastructureMaker(MapReader mapReader)
     {
-        map = GetComponent<MapReader>();
+        map = mapReader;
     }
+    
+    /// <summary>
+    /// Process the nodes to create the geometry.
+    /// </summary>
+    /// <returns></returns>
+    public abstract IEnumerable<int> Process();
 
     /// <summary>
     /// Get the centre of an object or road.
@@ -92,10 +102,11 @@ abstract class InfrastructureBehaviour : MonoBehaviour
         OnObjectCreated(way, localOrigin, vectors, normals, uvs, indices);
 
         // Apply the data to the mesh
-        mf.mesh.vertices = vectors.ToArray();
-        mf.mesh.normals = normals.ToArray();
-        mf.mesh.triangles = indices.ToArray();
-        mf.mesh.uv = uvs.ToArray();
+        mf.sharedMesh = new Mesh();
+        mf.sharedMesh.vertices = vectors.ToArray();
+        mf.sharedMesh.normals = normals.ToArray();
+        mf.sharedMesh.triangles = indices.ToArray();
+        mf.sharedMesh.uv = uvs.ToArray();
     }
 
     protected abstract void OnObjectCreated(OsmWay way, Vector3 origin, List<Vector3> vectors, List<Vector3> normals, List<Vector2> uvs, List<int> indices);

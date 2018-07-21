@@ -27,28 +27,39 @@ using UnityEngine;
 /// <summary>
 /// Make buildings.
 /// </summary>
-class BuildingMaker : InfrastructureBehaviour
+internal sealed class BuildingMaker : BaseInfrastructureMaker
 {
-    public Material building;
+    private Material building;
 
-    /// <summary>
-    /// Create the buildings.
-    /// </summary>
-    /// <returns></returns>
-    IEnumerator Start()
+    public override int NodeCount
     {
-        // Wait until the map is ready
-        while (!map.IsReady)
+        get
         {
-            yield return null;
+            return map.ways.FindAll((w) =>
+                                    {
+                                        return w.IsBuilding && w.NodeIDs.Count > 1;
+                                    }).Count;
         }
+    }
+
+    public BuildingMaker(MapReader mapReader, Material buildingMaterial)
+        : base(mapReader)
+    {
+        building = buildingMaterial;
+    }
+
+    public override IEnumerable<int> Process()
+    {
+        int count = 0;
 
         // Iterate through all the buildings in the 'ways' list
         foreach (var way in map.ways.FindAll((w) => { return w.IsBuilding && w.NodeIDs.Count > 1; }))
         {
             // Create the object
             CreateObject(way, building, "Building");
-            yield return null;
+
+            count++;
+            yield return count;
         }
     }
 

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Xml;
 using UnityEngine;
 
@@ -24,7 +25,7 @@ using UnityEngine;
     SOFTWARE.
 */
 
-class MapReader : MonoBehaviour
+internal sealed class MapReader
 {
     [HideInInspector]
     public Dictionary<ulong, OsmNode> nodes;
@@ -35,23 +36,19 @@ class MapReader : MonoBehaviour
     [HideInInspector]
     public OsmBounds bounds;
 
-    public GameObject groundPlane;
-
-    [Tooltip("The resource file that contains the OSM map data")]
-    public string resourceFile;
-
-    public bool IsReady { get; private set; }
-
-	// Use this for initialization
-	void Start ()
+    /// <summary>
+    /// Load the OpenMap data resource file.
+    /// </summary>
+    /// <param name="resourceFile">Path to the resource file. The file must exist.</param>
+	public void Read(string resourceFile)
     {
         nodes = new Dictionary<ulong, OsmNode>();
         ways = new List<OsmWay>();
 
-        var txtAsset = Resources.Load<TextAsset>(resourceFile);
+        var xmlText = File.ReadAllText(resourceFile);
 
         XmlDocument doc = new XmlDocument();
-        doc.LoadXml(txtAsset.text);
+        doc.LoadXml(xmlText);
 
         SetBounds(doc.SelectSingleNode("/osm/bounds"));
         GetNodes(doc.SelectNodes("/osm/node"));
@@ -61,33 +58,6 @@ class MapReader : MonoBehaviour
         float maxx = (float)MercatorProjection.lonToX(bounds.MaxLon);
         float miny = (float)MercatorProjection.latToY(bounds.MinLat);
         float maxy = (float)MercatorProjection.latToY(bounds.MaxLat);
-
-        groundPlane.transform.localScale = new Vector3((maxx - minx) / 2, 1, (maxy - miny) / 2);
-
-        IsReady = true;
-    }
-
-    void Update()
-    {
-        foreach (OsmWay w in ways)
-        {
-            if (w.Visible)
-            {
-                Color c = Color.cyan;               // cyan for buildings
-                if (!w.IsBoundary) c = Color.red; // red for roads
-
-                for (int i = 1; i < w.NodeIDs.Count; i++)
-                {
-                    OsmNode p1 = nodes[w.NodeIDs[i - 1]];
-                    OsmNode p2 = nodes[w.NodeIDs[i]];
-
-                    Vector3 v1 = p1 - bounds.Centre;
-                    Vector3 v2 = p2 - bounds.Centre;
-
-                    Debug.DrawLine(v1, v2, c);                   
-                }
-            }
-        }
     }
 
     void GetWays(XmlNodeList xmlNodeList)
