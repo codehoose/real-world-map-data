@@ -50,7 +50,7 @@ internal abstract class BaseInfrastructureMaker
     /// Process the nodes to create the geometry.
     /// </summary>
     /// <returns></returns>
-    public abstract IEnumerable<int> Process();
+    public abstract IEnumerable<int> Process(ImportMapWrapper mapWrapper);
 
     /// <summary>
     /// Get the centre of an object or road.

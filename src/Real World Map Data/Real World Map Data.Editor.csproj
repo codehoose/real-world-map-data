@@ -290,6 +290,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\Editor\OpenMapImporter\ActionMessage.cs" />
     <Compile Include="Assets\Scripts\Editor\OpenMapImporter\BuildingMaker.cs" />
     <Compile Include="Assets\Scripts\Editor\OpenMapImporter\ImportMapDataEditorWindow.cs" />
     <Compile Include="Assets\Scripts\Editor\OpenMapImporter\BaseInfrastructureMaker.cs" />

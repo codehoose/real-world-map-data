@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -48,7 +48,7 @@ internal sealed class BuildingMaker : BaseInfrastructureMaker
         building = buildingMaterial;
     }
 
-    public override IEnumerable<int> Process()
+    public override IEnumerable<int> Process(ImportMapWrapper mapWrapper)
     {
         int count = 0;
 
@@ -56,7 +56,8 @@ internal sealed class BuildingMaker : BaseInfrastructureMaker
         foreach (var way in map.ways.FindAll((w) => { return w.IsBuilding && w.NodeIDs.Count > 1; }))
         {
             // Create the object
-            CreateObject(way, building, "Building");
+            var action = (Action)(() => { CreateObject(way, building, "Building"); });
+            mapWrapper.AddAction(action);
 
             count++;
             yield return count;

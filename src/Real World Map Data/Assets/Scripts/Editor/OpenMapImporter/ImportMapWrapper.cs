@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 /*
     Copyright (c) 2018 Sloan Kelly
@@ -40,8 +41,15 @@ internal sealed class ImportMapWrapper
         _buildingMaterial = buildingMaterial;
     }
 
+    public void AddAction(Action action)
+    {
+        _window.AddMessage(new ActionMessage(action));
+    }
+
     public void Import()
     {
+        _window.StartImport();
+
         var mapReader = new MapReader();
         mapReader.Read(_mapFile);
 
@@ -50,6 +58,8 @@ internal sealed class ImportMapWrapper
 
         Process(buildingMaker, "Importing buildings");
         Process(roadMaker, "Importing roads");
+
+        _window.EndImport();
     }
 
     private void Process(BaseInfrastructureMaker maker, string progressText)
@@ -57,7 +67,7 @@ internal sealed class ImportMapWrapper
         float nodeCount = maker.NodeCount;
         var progress = 0f;
 
-        foreach (var node in maker.Process())
+        foreach (var node in maker.Process(this))
         {
             progress = node / nodeCount;
             _window.UpdateProgress(progress, progressText, false);

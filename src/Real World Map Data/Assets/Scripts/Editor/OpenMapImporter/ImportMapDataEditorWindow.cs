@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using UnityEditor.SceneManagement;
+using System.Threading;
+using System.Collections.Generic;
 
 /*
     Copyright (c) 2018 Sloan Kelly
@@ -35,6 +37,9 @@ public class ImportMapDataEditorWindow : EditorWindow
     private bool _validFile;
     private bool _importing;
 
+    private object _lock = new object();
+    private List<ActionMessage> _actions = new List<ActionMessage>();
+
     [MenuItem("Window/Import OpenMap Data")]
     public static void ShowEditorWindow()
     {
@@ -42,24 +47,54 @@ public class ImportMapDataEditorWindow : EditorWindow
         window.titleContent = new GUIContent("Import OpenMap");
         window.Show();
     }
+    
+    internal void StartImport()
+    {
+        ResetProgress();
+
+        AddMessage(new ActionMessage(() =>
+        {
+            _importing = true;
+        }));
+    }
+
+    internal void EndImport()
+    {
+        AddMessage(new ActionMessage(() =>
+        {
+            _importing = false;
+            EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
+        }));
+    }
+
+    internal void AddMessage(ActionMessage message)
+    {
+        lock(_lock)
+        {
+            _actions.Add(message);
+        }
+    }
 
     public void ResetProgress()
     {
-        _progress = 0f;
-        _progressText = "";
+        AddMessage(new ActionMessage(() =>
+        {
+            _progress = 0f;
+            _progressText = "";
+        }));
     }
 
     public void UpdateProgress(float progress, string progressText, bool done)
     {
-        _progress = progress;
-        _progressText = progressText;
-
-        if (!done)
-            EditorUtility.DisplayProgressBar("Importing Map",
-                                             string.Format("{0} {1:%}", progressText, progress), 
-                                             progress);
-        else
-            EditorUtility.ClearProgressBar();
+        AddMessage(new ActionMessage(() =>
+        {
+            if (done)
+            	EditorUtility.ClearProgressBar();
+            else
+                EditorUtility.DisplayProgressBar("Importing Map",
+                                     string.Format("{0} {1:%}", progressText, progress), 
+                                     progress);
+        }));
     }
 
     private void OnGUI()
@@ -94,16 +129,15 @@ public class ImportMapDataEditorWindow : EditorWindow
         EditorGUI.BeginDisabledGroup(!_validFile || _disableUI || _importing);
         if (GUILayout.Button("Import Map File"))
         {
-            _importing = true;
+            ThreadPool.QueueUserWorkItem(_ => {
 
-            var mapWrapper = new ImportMapWrapper(this, 
-                                                  _mapFilePath, 
-                                                  _roadMaterial, 
-                                                  _buildingMaterial);
+                var mapWrapper = new ImportMapWrapper(this,
+                                                      _mapFilePath,
+                                                      _roadMaterial,
+                                                      _buildingMaterial);
 
-            mapWrapper.Import();
-            EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
-            _importing = false;
+                mapWrapper.Import();
+            });
         }
 
         EditorGUI.EndDisabledGroup();
@@ -119,5 +153,18 @@ public class ImportMapDataEditorWindow : EditorWindow
     private void Update()
     {
         _disableUI = EditorSceneManager.GetActiveScene().isDirty;
+
+        lock(_lock)
+        {
+            foreach (var action in _actions)
+            {
+                action.Invoke();
+            }
+
+            if (_actions.Count > 0)
+                Repaint();
+
+            _actions.Clear();
+        }
     }
 }

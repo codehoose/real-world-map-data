@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 /*
@@ -45,14 +46,15 @@ internal sealed class RoadMaker : BaseInfrastructureMaker
     /// Create the roads.
     /// </summary>
     /// <returns></returns>
-    public override IEnumerable<int> Process()
+    public override IEnumerable<int> Process(ImportMapWrapper mapWrapper)
     {
         int count = 0;
 
         // Iterate through the roads and build each one
         foreach (var way in map.ways.FindAll((w) => { return w.IsRoad; }))
         {
-            CreateObject(way, roadMaterial, way.Name);
+            var action = (Action)(() => { CreateObject(way, roadMaterial, way.Name); });
+            mapWrapper.AddAction(action);
 
             count++;
             yield return count;
