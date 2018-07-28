@@ -49,11 +49,17 @@ public class ImportMapDataEditorWindow : EditorWindow
         _progressText = "";
     }
 
-    public void UpdateProgress(float progress, string progressText)
+    public void UpdateProgress(float progress, string progressText, bool done)
     {
         _progress = progress;
         _progressText = progressText;
-        Repaint();
+
+        if (!done)
+            EditorUtility.DisplayProgressBar("Importing Map",
+                                             string.Format("{0} {1:%}", progressText, progress), 
+                                             progress);
+        else
+            EditorUtility.ClearProgressBar();
     }
 
     private void OnGUI()
@@ -99,15 +105,8 @@ public class ImportMapDataEditorWindow : EditorWindow
             EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
             _importing = false;
         }
-        EditorGUI.EndDisabledGroup();
 
-        if (_importing)
-        {
-            var rect = EditorGUILayout.BeginHorizontal();
-            rect.height = 24;
-            EditorGUI.ProgressBar(rect, _progress, _progressText);
-            EditorGUILayout.EndHorizontal();
-        }
+        EditorGUI.EndDisabledGroup();
 
         if (_disableUI)
         {

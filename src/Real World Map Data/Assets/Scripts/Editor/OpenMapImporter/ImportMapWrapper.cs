@@ -54,12 +54,14 @@ internal sealed class ImportMapWrapper
 
     private void Process(BaseInfrastructureMaker maker, string progressText)
     {
-        var nodeCount = (float)maker.NodeCount;
+        float nodeCount = maker.NodeCount;
+        var progress = 0f;
 
         foreach (var node in maker.Process())
         {
-            var progress = node / nodeCount;
-            _window.UpdateProgress(progress, progressText);
+            progress = node / nodeCount;
+            _window.UpdateProgress(progress, progressText, false);
         }
+        _window.UpdateProgress(0, string.Empty, true);
     }
 }
