@@ -26,6 +26,9 @@ using UnityEditor.SceneManagement;
 
 public class ImportMapDataEditorWindow : EditorWindow
 {
+    private const string AssetName = "MapImporterSettings.asset";
+
+    private MapImportSettings _settings;
     private Material _roadMaterial;
     private Material _buildingMaterial;
     private string _mapFilePath = "None (Choose OpenMap File)";
@@ -62,6 +65,19 @@ public class ImportMapDataEditorWindow : EditorWindow
             EditorUtility.ClearProgressBar();
     }
 
+    private void OnEnable()
+    {
+        // Create an instance of the serializer and load the settings from disk
+        var serializer = new SettingsSerializer(AssetName);
+        _settings = serializer.Read();
+
+        // Set the internal fields from the serialized settings
+        _roadMaterial = _settings.roadMaterial;
+        _buildingMaterial = _settings.buildingMaterial;
+        _mapFilePath = _settings.resourcePath;
+        _validFile = _mapFilePath != null && _mapFilePath.Length > 0;
+    }
+
     private void OnGUI()
     {
         EditorGUILayout.BeginHorizontal();
@@ -96,6 +112,8 @@ public class ImportMapDataEditorWindow : EditorWindow
         {
             _importing = true;
 
+            SaveSettings();
+
             var mapWrapper = new ImportMapWrapper(this, 
                                                   _mapFilePath, 
                                                   _roadMaterial, 
@@ -119,5 +137,17 @@ public class ImportMapDataEditorWindow : EditorWindow
     private void Update()
     {
         _disableUI = EditorSceneManager.GetActiveScene().isDirty;
+    }
+
+    private void SaveSettings()
+    {
+        // Store the updated values in the settings object
+        _settings.resourcePath = _mapFilePath;
+        _settings.roadMaterial = _roadMaterial;
+        _settings.buildingMaterial = _buildingMaterial;
+
+        // Mark the settings as 'dirty' and save any unsaved assets
+        EditorUtility.SetDirty(_settings);
+        AssetDatabase.SaveAssets();
     }
 }
