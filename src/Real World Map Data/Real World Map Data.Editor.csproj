@@ -302,6 +302,8 @@
     <Compile Include="Assets\Scripts\Editor\OpenMapImporter\Serialization\OsmBounds.cs" />
     <Compile Include="Assets\Scripts\Editor\OpenMapImporter\Serialization\OsmNode.cs" />
     <Compile Include="Assets\Scripts\Editor\OpenMapImporter\Serialization\OsmWay.cs" />
+    <Compile Include="Assets\Scripts\Editor\OpenMapImporter\Settings\MapImportSettings.cs" />
+    <Compile Include="Assets\Scripts\Editor\OpenMapImporter\Settings\SettingsSerializer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Resources\copyright.txt" />
