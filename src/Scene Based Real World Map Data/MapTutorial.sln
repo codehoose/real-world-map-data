@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2015
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MapTutorial.Plugins", "MapTutorial.Plugins.csproj", "{3B154AB6-67C7-AB05-9236-C2669CB031B5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MapTutorial", "MapTutorial.csproj", "{D6815D30-C575-F21B-17B9-59513864E4E5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MapTutorial.Editor.Plugins", "MapTutorial.Editor.Plugins.csproj", "{FC989359-0069-05B4-5377-CD0F202513BE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3B154AB6-67C7-AB05-9236-C2669CB031B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B154AB6-67C7-AB05-9236-C2669CB031B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B154AB6-67C7-AB05-9236-C2669CB031B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B154AB6-67C7-AB05-9236-C2669CB031B5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D6815D30-C575-F21B-17B9-59513864E4E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D6815D30-C575-F21B-17B9-59513864E4E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D6815D30-C575-F21B-17B9-59513864E4E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D6815D30-C575-F21B-17B9-59513864E4E5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC989359-0069-05B4-5377-CD0F202513BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC989359-0069-05B4-5377-CD0F202513BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC989359-0069-05B4-5377-CD0F202513BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC989359-0069-05B4-5377-CD0F202513BE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
