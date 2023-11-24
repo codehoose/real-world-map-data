@@ -1,3 +1,6 @@
+# 2023-11-24
+Moved the default branch from `master` to `main`. If you fix a bug, please branch off main and do a pull request. Thanks!
+
 # Real World Map Data in Unity
 Data from Open Street Map (http://openstreetmap.org) can be imported into Unity at run-time or design-time using the scripts from the projects in this repository.
 
